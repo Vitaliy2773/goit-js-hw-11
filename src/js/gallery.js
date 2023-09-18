@@ -1,14 +1,19 @@
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
+
 import galleryCard from "../templates/gallery-card.hbs"
 
 
 import Notiflix from 'notiflix';
 import { PixabaiAPI } from "./pixabay-api";
+import { lightbox } from "./lightbox";
+
+
 import refs from "./refs";
 
 
 const pixabayApi = new PixabaiAPI(40);
+const modalLightboxGallery = new SimpleLightbox('.gallery a', {
+  captionDelay: 250,
+});
 
 refs.form.addEventListener("submit", onSubmit)
 
@@ -36,8 +41,9 @@ function onSubmit(e) {
     pixabayApi.getPhotos().then(data => {
         Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
 
-        refs.list.innerHTML = galleryCard(data.hits)
-        if (data.page === 1) {
+        refs.list.innerHTML = galleryCard(data.hits);
+        lightbox.refresh();
+        if (data.hits.length >= data.totalHits) {
             return Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.")
         }    
         
