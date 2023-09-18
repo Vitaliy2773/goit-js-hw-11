@@ -27,38 +27,68 @@ const observer = new IntersectionObserver((entries, observer) => {
     threshold: 1,
 })
 
-function onSubmit(e) {
+async function onSubmit(e) {
     e.preventDefault();
+    
 
     const searchQuery = e.currentTarget.elements.searchQuery.value.trim()
-    if (!searchQuery) {
-     return   Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.")
-    }
-
     pixabayApi.q = searchQuery;
     pixabayApi.page = 1;
+    if (!searchQuery) {
+        return Notiflix.Notify.info("Please enter a search keyword!")
+    }
+     
+      
+     
 
-    pixabayApi.getPhotos().then(data => {
-        Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
-
-        refs.list.innerHTML = galleryCard(data.hits);
-        lightbox.refresh();
-        if (data.hits.length >= data.totalHits) {
-            return Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.")
-        }    
-        
-    observer.observe(document.querySelector(".target-element"))
-        
-    }).catch(err =>console.log(err))
+    try {
+        const response = await pixabayApi.getPhotos();
+        const images = response.data.hits;
+        totalHits = response.data.totalHits;
+       observer.observe(document.querySelector(".target-element"))
+        if (images.length === 0) {
+            return Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.")
+        }
+         
+        else if (totalHits === 1) {
+            refs.list.innerHTML = galleryCard(images);
+            lightbox.refresh();
+            Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+           
+        }
+        else {
+            refs.list.innerHTML = galleryCard(images);
+            lightbox.refresh();
+            Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+        }
+    } catch (error) {
+        console.log(error)
+    }
 }
 
-function loadMoreData() {
+async function loadMoreData() {
     pixabayApi.page += 1;
-    pixabayApi.getPhotos().then(resp => {
-        if (pixabayApi.page === resp.per_page) {
-            observer.unobserve(document.querySelector(".target-element"))
+    const totalPages = Math.ceil(totalHits / pixabayApi.per_page);
+    if (pixabayApi.page > totalPages) {
+    return Notiflix.Notify.info(
+      "We're sorry, but you've reached the end of search results."
+    );
+    }
+    try {
+        const response = await pixabayApi.getPhotos();
+        const images = response.data.hits;
+        refs.list.insertAdjacentHTML('beforeend', galleryCard(images));
+        lightbox.refresh();
+          if (pixabayApi.page === totalPages) {
+              observer.unobserve(document.querySelector(".target-element"));
         }
-        refs.list.insertAdjacentHTML('beforeend',galleryCard(resp.hits))
-    }).catch(err => console.log(err))
+    } catch {
+        error(console.log(error))
+    };
+    
+   
+      
+        
+    
 }
 

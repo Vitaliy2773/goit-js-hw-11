@@ -10,9 +10,9 @@ export class PixabaiAPI {
         this.q = '';
     }
 
-    getPhotos() {
+    async getPhotos() {
 
-       return axios.get(`${this.#BASE_URL}`, {
+       const response = axios.get(`${this.#BASE_URL}`, {
     params: {
         q: this.q,
             page: this.page,
@@ -23,7 +23,7 @@ export class PixabaiAPI {
             safesearch: 'true'
     }
        })
-        .then(resp => resp.data)
+        return response;
     }
 
 }
