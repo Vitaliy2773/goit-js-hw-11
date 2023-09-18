@@ -12,7 +12,7 @@ export class PixabaiAPI {
 
     getPhotos() {
 
-       return axios.get(`${this.#BASE_URL}${this.#API_KEY}`, {
+       return axios.get(`${this.#BASE_URL}`, {
     params: {
         q: this.q,
             page: this.page,
