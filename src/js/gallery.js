@@ -16,6 +16,7 @@ const modalLightboxGallery = new SimpleLightbox('.gallery a', {
 });
 
 refs.form.addEventListener("submit", onSubmit)
+let totalHits = 0;
 
 const observer = new IntersectionObserver((entries, observer) => {
     if (entries[0].isIntersecting) {
@@ -43,7 +44,7 @@ async function onSubmit(e) {
 
     try {
         const response = await pixabayApi.getPhotos();
-        const images =  response.data.hits;
+        const images = await response.data.hits;
         totalHits = response.data.totalHits;
        observer.observe(document.querySelector(".target-element"))
         if (images.length === 0) {
@@ -76,7 +77,7 @@ async function loadMoreData() {
     }
     try {
         const response = await pixabayApi.getPhotos();
-        const images = response.data.hits;
+        const images = await response.data.hits;
         refs.list.insertAdjacentHTML('beforeend', galleryCard(images));
         lightbox.refresh();
           if (pixabayApi.page === totalPages) {
