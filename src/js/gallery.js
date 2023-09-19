@@ -43,8 +43,8 @@ async function onSubmit(e) {
 
     try {
         const response = await pixabayApi.getPhotos();
-        const images = response.data.hits;
-        totalHits = response.data.totalHits;
+        const images =  await response.data.hits;
+        totalHits = await response.data.totalHits;
        observer.observe(document.querySelector(".target-element"))
         if (images.length === 0) {
             return Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.")
@@ -76,7 +76,7 @@ async function loadMoreData() {
     }
     try {
         const response = await pixabayApi.getPhotos();
-        const images = response.data.hits;
+        const images = await response.data.hits;
         refs.list.insertAdjacentHTML('beforeend', galleryCard(images));
         lightbox.refresh();
           if (pixabayApi.page === totalPages) {
