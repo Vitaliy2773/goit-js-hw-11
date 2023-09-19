@@ -43,7 +43,7 @@ async function onSubmit(e) {
 
     try {
         const response = await pixabayApi.getPhotos();
-        const images =  await response.data.hits;
+        const images =  response.data.hits;
         totalHits = response.data.totalHits;
        observer.observe(document.querySelector(".target-element"))
         if (images.length === 0) {
@@ -76,7 +76,7 @@ async function loadMoreData() {
     }
     try {
         const response = await pixabayApi.getPhotos();
-        const images = await response.data.hits;
+        const images = response.data.hits;
         refs.list.insertAdjacentHTML('beforeend', galleryCard(images));
         lightbox.refresh();
           if (pixabayApi.page === totalPages) {
