@@ -48,23 +48,27 @@ async function onSubmit(e) {
         totalHits = response.data.totalHits;
        observer.observe(document.querySelector(".target-element"))
         if (images.length === 0) {
+            refs.list.innerHTML = "";
             return Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.")
+            
         }
          
         else if (totalHits === 1) {
             refs.list.innerHTML = galleryCard(images);
             lightbox.refresh();
             Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+          
            
         }
         else {
             refs.list.innerHTML = galleryCard(images);
             lightbox.refresh();
             Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+         
         }
     } catch (error) {
         console.log(error)
-    }
+    } 
 }
 
 async function loadMoreData() {
